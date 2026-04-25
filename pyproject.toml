@@ -1,0 +1,12 @@
+[project]
+name = "DalySmartBMSTest"
+version = "0.1.0"
+description = "Daly BMS UART/RS-485 tools"
+requires-python = ">=3.10"
+dependencies = [
+    "pyserial>=3.5",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"

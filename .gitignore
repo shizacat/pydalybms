@@ -1,0 +1,5 @@
+.venv/*
+*.pyc
+.DS_Store
+tmp/*
+source/test.py
