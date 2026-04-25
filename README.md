@@ -15,4 +15,8 @@ Important: For work with UART, you first need push activate button on BMS. The a
 
 ```python
 from pydalybms import DalyBMS
+
+bms = DalyBMS("/dev/ttyUSB0")
+soc = bms.get_soc()
+print(soc)
 ```
