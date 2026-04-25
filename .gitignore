@@ -3,3 +3,6 @@
 .DS_Store
 tmp/*
 source/test.py
+dist/*
+build/*
+*.egg-info/*

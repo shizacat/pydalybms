@@ -4,6 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pydalybms"
+dynamic = ["version"]
+authors = [
+    {name = "Alexey Matveev"},
+]
 version = "0.1.0"
 description = "Python library for communicating with Daly BMS over UART/RS-485"
 requires-python = ">=3.10"
@@ -18,3 +22,10 @@ classifiers = [
 
 [tool.hatch.version]
 path = "pydalybms/__init__.py"
+
+
+[tool.hatch.build.targets.sdist]
+include = ["pydalybms"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["pydalybms"]
