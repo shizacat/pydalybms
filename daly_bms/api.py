@@ -70,7 +70,7 @@ class DalyBMS:
     # --- Private methods ---
 
     def _checks(self) -> None:
-        """Существующий путь, не каталог. /dev/tty* — char device, не regular file (is_file() = False)."""
+        """Existing path and not a directory (serial devices are not regular files)."""
         device_path = Path(self._device_path)
         if not device_path.exists():
             raise FileNotFoundError(f"Device path {self._device_path} does not exist")
@@ -217,10 +217,10 @@ class DalyBMS:
 
     def get_soc(self) -> SoCAnswer:
         """
-        SOC, напряжения, ток (0x90).
+        SOC, voltages, and current (0x90).
 
-        Byte0~1 cumulative U (0,1 V); 2~3 gather U; 4~5 current (30000, 0,1 A);
-        6~7 SOC (0,1 %).
+        Byte0~1 cumulative U (0.1 V); 2~3 gather U; 4~5 current (30000 offset, 0.1 A);
+        6~7 SOC (0.1 %).
         """
         frame = self._send_frame_and_read_one(
             self._build_read_frame(

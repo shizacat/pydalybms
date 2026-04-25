@@ -20,8 +20,8 @@ class VoltageCell:
     Voltage in one cell
     """
 
-    voltage: float = field(metadata=_doc("Voltage, V. Напряжение, В."))
-    number: int = field(metadata=_doc("Number, int. Номер ячейки."))
+    voltage: float = field(metadata=_doc("Voltage, V."))
+    number: int = field(metadata=_doc("Cell number (1-based)."))
 
 
 @dataclass
@@ -30,8 +30,8 @@ class TemperatureCell:
     Temperature in one cell
     """
 
-    temperature: float = field(metadata=_doc("Temperature, C. Температура, С."))
-    number: int = field(metadata=_doc("Number, int. Номер ячейки."))
+    temperature: float = field(metadata=_doc("Temperature, °C."))
+    number: int = field(metadata=_doc("Cell number (1-based)."))
 
 
 # --- Classes Answers ---
@@ -40,25 +40,25 @@ class TemperatureCell:
 @dataclass
 class SoCAnswer:
     """
-    Ответ на запрос SOC
+    Response to the SOC request.
     """
 
     cumulative_total_voltage: float = field(
         metadata=_doc(
             "Cumulative total voltage, V. "
-            "Суммарное напряжение по ячейкам (см. даташит Daly 0x90)."
+            "Sum of per-cell voltages (see Daly datasheet, 0x90)."
         )
     )
     gather_total_voltage: float = field(
         metadata=_doc(
             "Gather total voltage, V. "
-            "Второй канал измерения U пачки (см. даташит Daly 0x90)."
+            "Second pack-voltage measurement channel (see Daly datasheet, 0x90)."
         )
     )
     current: float = field(
-        metadata=_doc("Current, A. Ток, А (смещение 30000 в сырых данных BMS).")
+        metadata=_doc("Current, A (raw data uses offset 30000).")
     )
-    soc: float = field(metadata=_doc("State of Charge (SOC), %. Состояние заряда, %."))
+    soc: float = field(metadata=_doc("State of Charge (SOC), %."))
 
     @classmethod
     def from_frame(cls, frame: DalyBMSResponseFrame) -> "SoCAnswer":
@@ -76,7 +76,7 @@ class SoCAnswer:
         Returns:
             SoC answer.
         """
-        # §3 / 0x90: значения напряжения и SOC — беззнаковые 16-bit; ток кодируется offset=30000.
+        # §3 / 0x90: voltage and SOC are unsigned 16-bit; current uses offset=30000.
         cumul_raw = struct.unpack(">H", frame.data[0:2])[0]
         gather_raw = struct.unpack(">H", frame.data[2:4])[0]
         current_raw = struct.unpack(">H", frame.data[4:6])[0]
@@ -114,7 +114,7 @@ class VoltageMinMaxCellAnswer:
         Returns:
             VoltageMinMaxCellAnswer.
         """
-        # §3 / 0x91: сначала MAX (mV), потом MIN (mV). Значения — беззнаковые 16-bit.
+        # §3 / 0x91: MAX (mV) first, then MIN (mV). Values are unsigned 16-bit.
         max_mv = struct.unpack(">H", frame.data[0:2])[0]
         max_no = struct.unpack(">B", frame.data[2:3])[0]
         min_mv = struct.unpack(">H", frame.data[3:5])[0]
@@ -148,7 +148,7 @@ class TemperatureMinMaxCellAnswer:
         Args:
             frame: Daly BMS response frame.
         """
-        # В даташите для 0x92 используются 1-байтовые значения (offset 40), не int16.
+        # Datasheet for 0x92 uses 1-byte values (offset 40), not int16.
         max_temp_c = float(frame.data[0] - 40)
         max_no = int(frame.data[1])
         min_temp_c = float(frame.data[2] - 40)

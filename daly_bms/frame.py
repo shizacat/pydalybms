@@ -1,6 +1,6 @@
 """
-Кадры Daly BMS по даташиту «UART/485 Communications Protocol».
-§2.3.1 — запрос хоста, §2.3.2 — ответ слейва (BMS).
+Daly BMS frames per the "UART/485 Communications Protocol" datasheet.
+§2.3.1 — host request, §2.3.2 — slave (BMS) response.
 
 Second layer OSI, Frame, §2.3.2.
 """
@@ -13,15 +13,15 @@ from enum import Enum, IntEnum
 RESPONSE_FRAME_LEN = 13
 RESPONSE_DATA_LEN = 8
 RESPONSE_START_FLAG = 0xA5
-# В ответе слейва (BMS) второй байт — 0x01, §2.2 «BMS master 0x01»
+# In the slave (BMS) response, the second byte is 0x01, §2.2 "BMS master 0x01".
 RESPONSE_BMS_ADDRESS = 0x01
-# Поле длины данных, фиксировано 8 байт (0x08 в кадре)
+# Data-length field is fixed to 8 bytes (0x08 in the frame).
 RESPONSE_DATA_LENGTH_FIELD = 0x08
 
 
 class DalyBMSCommand(Enum):
     """
-    Data ID, §3 «Communications content information» (названия как в даташите).
+    Data ID, §3 "Communications content information" (names follow the datasheet).
     """
 
     SOC = 0x90
@@ -37,7 +37,7 @@ class DalyBMSCommand(Enum):
 
 class DalyBMSHostAddress(IntEnum):
     """
-    Ниббл хоста: второй байт *запроса* = (nibble & 0xF) << 4, §2.2 / §2.3.1.
+    Host nibble: the 2nd byte of the *request* is (nibble & 0xF) << 4, §2.2 / §2.3.1.
     """
 
     GPRS = 2  # 0x20
@@ -70,7 +70,7 @@ def daly_link_checksum_12b(data: bytes) -> int:
 
 # def build_daly_read_request_frame(host_nibble: int, data_id: int) -> bytes:
 #     """
-#     Read-запрос: 0xA5, (nibble<<4), Data ID, 0x08, 8 нулей, + 1 byte checksum.
+#     Read request: 0xA5, (nibble<<4), Data ID, 0x08, 8 zeros, + 1 byte checksum.
 #     """
 #     if not (0 <= host_nibble <= 15):
 #         raise ValueError("host nibble 0..15")
